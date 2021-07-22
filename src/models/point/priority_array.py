@@ -43,7 +43,7 @@ class PriorityArrayModel(db.Model):
 
     def check_self(self) -> (bool, any):
         if self.get_highest_priority_value_from_priority_array(self) is None:
-            from src.models.model_point import PointModel
+            from src.models.point.model_point import PointModel
             point: PointModel = self.point
             self._16 = point.fallback_value
 

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 8d288c3b3d7e
+Revision ID: cce134b0b3ed
 Revises: 
-Create Date: 2021-07-22 14:00:23.464174
+Create Date: 2021-07-22 15:20:30.165521
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8d288c3b3d7e'
+revision = 'cce134b0b3ed'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -56,10 +56,10 @@ def upgrade():
     sa.Column('zero_based', sa.Boolean(), nullable=False),
     sa.Column('ping_point', sa.String(length=10), nullable=True),
     sa.Column('supports_multiple_rw', sa.Boolean(), nullable=False),
-    sa.Column('modbus_network_uuid_constraint', sa.String(), nullable=False),
+    sa.Column('network_uuid_constraint', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['network_uuid'], ['networks.uuid'], ),
     sa.PrimaryKeyConstraint('uuid'),
-    sa.UniqueConstraint('address', 'modbus_network_uuid_constraint')
+    sa.UniqueConstraint('address', 'network_uuid_constraint')
     )
     op.create_table('points',
     sa.Column('created_on', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),

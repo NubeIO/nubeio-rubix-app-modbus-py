@@ -3,7 +3,7 @@ from sqlalchemy.orm import validates
 
 from src import db
 from src.enums.point import ModbusFunctionCode, ModbusDataType, ModbusDataEndian
-from src.models.model_priority_array import PriorityArrayModel
+from src.models.point.priority_array import PriorityArrayModel
 
 from src.models.model_base import ModelBase
 

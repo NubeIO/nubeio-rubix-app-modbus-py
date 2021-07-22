@@ -4,8 +4,8 @@ from sqlalchemy.orm import validates
 
 from src import db
 from src.enums.network import ModbusType
-from src.models.model_point import PointModel
-from src.models.model_network import NetworkModel
+from src.models.point.point import PointModel
+from src.models.network.network import NetworkModel
 
 from src.models.model_base import ModelBase
 
@@ -23,11 +23,11 @@ class DeviceModel(ModelBase):
     zero_based = db.Column(db.Boolean(), nullable=False, default=False)
     ping_point = db.Column(db.String(10))
     supports_multiple_rw = db.Column(db.Boolean(), nullable=False, default=False)
-    modbus_network_uuid_constraint = db.Column(db.String, nullable=False)
+    network_uuid_constraint = db.Column(db.String, nullable=False)
     points = db.relationship('PointModel', cascade="all,delete", backref='device', lazy=True)
 
     __table_args__ = (
-        UniqueConstraint('address', 'modbus_network_uuid_constraint'),
+        UniqueConstraint('address', 'network_uuid_constraint'),
     )
 
     @validates('ping_point')
@@ -46,5 +46,5 @@ class DeviceModel(ModelBase):
         if network is None:
             raise NotFoundException(f'No network found with uuid {self.network_uuid}')
         self.type = network.type
-        self.modbus_network_uuid_constraint = self.network_uuid
+        self.network_uuid_constraint = self.network_uuid
         return True
