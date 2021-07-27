@@ -228,7 +228,7 @@ class PointModel(ModelBase):
         return 16
 
     def publish_cov(self, point_store: PointStoreModel, device=None, network: NetworkModel = None,
-                    driver_name: str = None, force_clear: bool = False):
+                    force_clear: bool = False):
         from src.models.model_device import DeviceModel
         if point_store is None:
             raise Exception('Point.publish_cov point_store cannot be None')
@@ -239,15 +239,13 @@ class PointModel(ModelBase):
         if device is None or network is None:
             raise Exception(f'Cannot find network or device for point {self.uuid}')
         priority = self._get_highest_priority_field()
-        if driver_name is None:
-            driver_name = Drivers.MODBUS.name
         from src.event_dispatcher import EventDispatcher
         EventDispatcher().dispatch_from_source(None, Event(EventType.POINT_COV, {
             'point': self,
             'point_store': point_store,
             'device': device,
             'network': network,
-            'driver_name': driver_name,
+            'driver_name': Drivers.MODBUS.name,
             'clear_value': force_clear or False,
             'priority': priority
         }))

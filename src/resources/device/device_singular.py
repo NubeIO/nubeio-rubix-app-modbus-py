@@ -19,7 +19,7 @@ class DeviceSingularResource(DeviceBaseResource):
     def get(cls, **kwargs):
         device: DeviceModel = cls.get_device(**kwargs)
         if not device:
-            raise NotFoundException('Device not found')
+            raise NotFoundException('Modbus Device not found')
         return device_marshaller(device, request.args)
 
     @classmethod

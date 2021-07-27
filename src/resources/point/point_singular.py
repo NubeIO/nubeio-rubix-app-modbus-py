@@ -24,7 +24,7 @@ class PointSingularResource(PointBaseResource):
     def get(cls, **kwargs):
         point: PointModel = cls.get_point(**kwargs)
         if not point:
-            raise NotFoundException('Point not found')
+            raise NotFoundException('Modbus Point not found')
         return point
 
     @classmethod
@@ -52,7 +52,7 @@ class PointSingularResource(PointBaseResource):
         data = cls.patch_parser.parse_args()
         point: PointModel = cls.get_point(**kwargs)
         if not point:
-            raise NotFoundException('Point not found')
+            raise NotFoundException('Modbus Point not found')
         return cls.update_point(data, point)
 
     @classmethod
@@ -60,7 +60,7 @@ class PointSingularResource(PointBaseResource):
         point: PointModel = cls.get_point(**kwargs)
         point.publish_cov(point.point_store, force_clear=True)
         if not point:
-            raise NotFoundException('Point not found')
+            raise NotFoundException('Modbus Point not found')
         point.delete_from_db()
         return '', 204
 

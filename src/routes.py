@@ -13,11 +13,15 @@ from src.resources.point.point_poll import PointPollResource, PointPollNonExisti
 from src.resources.point.point_singular import PointSingularResourceByUUID, PointSingularResourceByName
 from src.resources.point.point_stores import PointPluralPointStoreResource, PointStoreResource, \
     DevicePointPluralPointStoreResource
+from src.resources.point.point_sync import MPToBPSync, MPSync
 from src.resources.point.point_value_writer import PointUUIDValueWriterResource, PointNameValueWriterResource
+from src.system.resources.memory import GetSystemMem
 from src.system.resources.ping import Ping
 
 bp_system = Blueprint('system', __name__, url_prefix='/api/system')
-Api(bp_system).add_resource(Ping, '/ping')
+api_system = Api(bp_system)
+api_system.add_resource(GetSystemMem, '/memory')
+api_system.add_resource(Ping, '/ping')
 
 bp_modbus = Blueprint('modbus', __name__, url_prefix='/api/modbus')
 api_modbus = Api(bp_modbus)
@@ -51,3 +55,8 @@ api_mapping_mp_gbp.add_resource(MPGBPMappingResourceByModbusPointUUID, '/modbus/
 api_mapping_mp_gbp.add_resource(MPGBPMappingResourceByGenericPointUUID, '/generic/<string:uuid>')
 api_mapping_mp_gbp.add_resource(MPGBPMappingResourceByBACnetPointUUID, '/bacnet/<string:uuid>')
 api_mapping_mp_gbp.add_resource(MPGBMappingResourceUpdateMappingState, '/update_mapping_state')
+
+bp_sync = Blueprint('sync', __name__, url_prefix='/api/sync')
+api_sync = Api(bp_sync)
+api_sync.add_resource(MPToBPSync, '/mp_to_bp')
+api_sync.add_resource(MPSync, '/mp')

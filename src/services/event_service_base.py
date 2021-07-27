@@ -13,12 +13,9 @@ class EventType(IntEnum):
     INTERNAL_SERVICE_TIMEOUT = auto()
     CALLABLE = auto()
     POINT_COV = auto()
-    SCHEDULE_MODEL = auto()
     MAPPING_MODEL = auto()
     MQTT_DEBUG = auto()
     POINT_REGISTRY_UPDATE = auto()
-    SCHEDULES = auto()
-    SCHEDULE_VALUE = auto()
 
 
 # TODO: implement event queue overload warning and clearing

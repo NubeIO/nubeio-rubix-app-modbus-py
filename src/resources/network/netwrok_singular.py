@@ -19,7 +19,7 @@ class NetworkSingularResource(NetworkBaseResource):
     def get(cls, **kwargs):
         network: NetworkModel = cls.find_network(**kwargs)
         if not network:
-            raise NotFoundException('Network not found')
+            raise NotFoundException('Modbus Network not found')
         return modbus_network_marshaller(network, request.args)
 
     # TODO: don't allow type in patch

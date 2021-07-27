@@ -15,8 +15,8 @@ from src.models.model_priority_array import PriorityArrayModel
 from src.utils.model_utils import get_datetime
 
 
-class PointStoreModelMixin(db.Model):
-    __abstract__ = True
+class PointStoreModel(db.Model):
+    __tablename__ = 'point_stores'
     value = db.Column(db.Float(), nullable=True)
     value_original = db.Column(db.Float(), nullable=True)
     value_raw = db.Column(db.String(), nullable=True)
@@ -24,10 +24,6 @@ class PointStoreModelMixin(db.Model):
     fault_message = db.Column(db.String())
     ts_value = db.Column(db.DateTime())
     ts_fault = db.Column(db.DateTime())
-
-
-class PointStoreModel(PointStoreModelMixin):
-    __tablename__ = 'point_stores'
     point_uuid = db.Column(db.String, db.ForeignKey('points.uuid'), primary_key=True, nullable=False)
 
     def __repr__(self):

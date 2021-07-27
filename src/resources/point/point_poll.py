@@ -20,7 +20,7 @@ class PointPollResource(RubixResource):
     def get(cls, uuid: str):
         point = PointModel.find_by_uuid(uuid)
         if not point:
-            raise NotFoundException('Point not found')
+            raise NotFoundException('Modbus Point not found')
         else:
             event = EventCallableBlocking(ModbusPolling.poll_point, (point,))
             EventDispatcher().dispatch_to_source_only(event, Drivers.MODBUS.name)

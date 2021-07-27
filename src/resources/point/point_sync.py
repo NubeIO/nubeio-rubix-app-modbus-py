@@ -4,14 +4,14 @@ from src.background import Background
 from src.models.model_point_store import PointStoreModel
 
 
-class MPToBPSyncResource(RubixResource):
+class MPToBPSync(RubixResource):
 
     @classmethod
     def get(cls):
         PointStoreModel.sync_points_values_mp_to_gbp_process(gp=False)
 
 
-class MPSyncResource(RubixResource):
+class MPSync(RubixResource):
 
     @classmethod
     def get(cls):
