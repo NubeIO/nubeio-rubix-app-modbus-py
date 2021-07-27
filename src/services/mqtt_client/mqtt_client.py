@@ -5,8 +5,8 @@ from typing import Callable, List, Union
 from registry.models.model_device_info import DeviceInfoModel
 from registry.resources.resource_device_info import get_device_info
 
-from src.models.point.point import PointModel
-from src.models.point.point_store import PointStoreModel
+from src.models.model_point import PointModel
+from src.models.model_point_store import PointStoreModel
 from src.services.event_service_base import EventServiceBase, Event, EventType
 from src.services.mqtt_client.mqtt_listener import MqttListener
 from .mqtt_registry import MqttRegistry

@@ -1,6 +1,6 @@
 from flask_restful.reqparse import request
 
-from src.models.network.network import NetworkModel
+from src.models.model_network import NetworkModel
 from src.resources.network.network_base import NetworkBaseResource, modbus_network_marshaller
 
 

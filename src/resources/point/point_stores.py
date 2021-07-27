@@ -1,8 +1,8 @@
 from typing import List
 
-from src.models.point.point import PointModel
+from src.models.model_point import PointModel
 from src.resources.point.point_base import PointBaseResource
-from src.models.point.point_store import PointStoreModel
+from src.models.model_point_store import PointStoreModel
 
 
 # TODO: move all to base point_store resource

@@ -1,10 +1,10 @@
 from flask_restful import marshal_with, reqparse
 from rubix_http.exceptions.exception import NotFoundException
 
-from src.models.point.point import PointModel
+from src.models.model_point import PointModel
 from src.resources.point.point_base import PointBaseResource
 from src.resources.rest_schema.schema_point import point_all_fields, point_all_attributes
-from src.models.point.priority_array import PriorityArrayModel
+from src.models.model_priority_array import PriorityArrayModel
 
 
 class PointSingularResource(PointBaseResource):

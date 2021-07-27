@@ -43,9 +43,10 @@ def create_app(app_setting) -> Flask:
         cursor.close()
 
     def register_router(_app) -> Flask:
-        from src.routes import bp_system, bp_modbus
+        from src.routes import bp_system, bp_modbus, bp_mapping_mp_gbp
         _app.register_blueprint(bp_system)
         _app.register_blueprint(bp_modbus)
+        _app.register_blueprint(bp_mapping_mp_gbp)
         return _app
 
     setup(app)

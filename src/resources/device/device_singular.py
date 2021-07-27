@@ -2,7 +2,7 @@ from flask_restful import reqparse
 from flask_restful.reqparse import request
 from rubix_http.exceptions.exception import NotFoundException
 
-from src.models.device.device import DeviceModel
+from src.models.model_device import DeviceModel
 from src.resources.device.device_base import DeviceBaseResource, device_marshaller
 from src.resources.rest_schema.schema_device import device_all_attributes
 

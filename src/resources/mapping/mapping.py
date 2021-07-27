@@ -6,11 +6,11 @@ from rubix_http.exceptions.exception import NotFoundException
 from rubix_http.resource import RubixResource
 
 from src.enums.mapping import MappingState, MapType
-from src.models.mapping.mapping import MPGBPMapping
+from src.models.model_mapping import MPGBPMapping
 from src.resources.rest_schema.schema_mapping import mapping_mp_gbp_attributes, \
     mapping_mp_gbp_all_fields, mapping_mp_gbp_uuid_attributes, mapping_mp_gbp_name_attributes, \
     mapping_mp_gbp_patch_attributes
-from src.models.point.point_store import PointStoreModel
+from src.models.model_point_store import PointStoreModel
 
 
 def sync_point_value(mapping: MPGBPMapping):

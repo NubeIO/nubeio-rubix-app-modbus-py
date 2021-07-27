@@ -3,6 +3,9 @@ from flask_restful import Api
 
 from src.resources.device.device_plural import DevicePluralResource
 from src.resources.device.device_singular import DeviceSingularResourceByUUID, DeviceSingularResourceByName
+from src.resources.mapping.mapping import MPGBPMappingResourceList, MPGBPMappingResourceListByUUID, \
+    MPGBPMappingResourceListByName, MPGBPMappingResourceByUUID, MPGBPMappingResourceByModbusPointUUID, \
+    MPGBPMappingResourceByGenericPointUUID, MPGBPMappingResourceByBACnetPointUUID, MPGBMappingResourceUpdateMappingState
 from src.resources.network.netwrok_plural import NetworkPluralResource
 from src.resources.network.netwrok_singular import NetworkSingularResourceByUUID, NetworkSingularResourceByName
 from src.resources.point.point_plural import PointPluralResource
@@ -36,3 +39,15 @@ api_modbus.add_resource(DevicePointPluralPointStoreResource, '/<string:device_uu
 api_modbus.add_resource(PointUUIDValueWriterResource, '/points_value/uuid/<string:uuid>')
 api_modbus.add_resource(PointNameValueWriterResource,
                         '/points_value/name/<string:network_name>/<string:device_name>/<string:point_name>')
+
+# Modbus <> Generic|BACnet points mappings
+bp_mapping_mp_gbp = Blueprint('mappings_mp_gbp', __name__, url_prefix='/api/mappings/mp_gbp')
+api_mapping_mp_gbp = Api(bp_mapping_mp_gbp)
+api_mapping_mp_gbp.add_resource(MPGBPMappingResourceList, '')
+api_mapping_mp_gbp.add_resource(MPGBPMappingResourceListByUUID, '/uuid')
+api_mapping_mp_gbp.add_resource(MPGBPMappingResourceListByName, '/name')
+api_mapping_mp_gbp.add_resource(MPGBPMappingResourceByUUID, '/uuid/<string:uuid>')
+api_mapping_mp_gbp.add_resource(MPGBPMappingResourceByModbusPointUUID, '/modbus/<string:uuid>')
+api_mapping_mp_gbp.add_resource(MPGBPMappingResourceByGenericPointUUID, '/generic/<string:uuid>')
+api_mapping_mp_gbp.add_resource(MPGBPMappingResourceByBACnetPointUUID, '/bacnet/<string:uuid>')
+api_mapping_mp_gbp.add_resource(MPGBMappingResourceUpdateMappingState, '/update_mapping_state')

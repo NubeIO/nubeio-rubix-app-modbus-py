@@ -7,9 +7,9 @@ from sqlalchemy.orm import validates
 from src import db
 from src.enums.drivers import Drivers
 from src.enums.point import ModbusFunctionCode, ModbusDataType, ModbusDataEndian, HistoryType
-from src.models.network.network import NetworkModel
-from src.models.point.point_store import PointStoreModel
-from src.models.point.priority_array import PriorityArrayModel
+from src.models.model_network import NetworkModel
+from src.models.model_point_store import PointStoreModel
+from src.models.model_priority_array import PriorityArrayModel
 
 from src.models.model_base import ModelBase
 from src.services.event_service_base import Event, EventType
@@ -228,8 +228,8 @@ class PointModel(ModelBase):
         return 16
 
     def publish_cov(self, point_store: PointStoreModel, device=None, network: NetworkModel = None,
-                    driver_name: str = Drivers.MODBUS, force_clear: bool = False):
-        from src.models.device.device import DeviceModel
+                    driver_name: str = None, force_clear: bool = False):
+        from src.models.model_device import DeviceModel
         if point_store is None:
             raise Exception('Point.publish_cov point_store cannot be None')
         if device is None:
@@ -239,7 +239,8 @@ class PointModel(ModelBase):
         if device is None or network is None:
             raise Exception(f'Cannot find network or device for point {self.uuid}')
         priority = self._get_highest_priority_field()
-
+        if driver_name is None:
+            driver_name = Drivers.MODBUS.name
         from src.event_dispatcher import EventDispatcher
         EventDispatcher().dispatch_from_source(None, Event(EventType.POINT_COV, {
             'point': self,
@@ -330,7 +331,7 @@ class PointModel(ModelBase):
 
     @classmethod
     def find_by_name(cls, network_name: str, device_name: str, point_name: str):
-        from src.models.device.device import DeviceModel
+        from src.models.model_device import DeviceModel
         results = cls.query.filter_by(name=point_name) \
             .join(DeviceModel).filter_by(name=device_name) \
             .join(NetworkModel).filter_by(name=network_name) \

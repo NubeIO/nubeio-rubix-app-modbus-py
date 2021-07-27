@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: cce134b0b3ed
+Revision ID: f7060387d341
 Revises: 
-Create Date: 2021-07-22 15:20:30.165521
+Create Date: 2021-07-27 11:18:21.846923
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cce134b0b3ed'
+revision = 'f7060387d341'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -59,7 +59,8 @@ def upgrade():
     sa.Column('network_uuid_constraint', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['network_uuid'], ['networks.uuid'], ),
     sa.PrimaryKeyConstraint('uuid'),
-    sa.UniqueConstraint('address', 'network_uuid_constraint')
+    sa.UniqueConstraint('address', 'network_uuid_constraint'),
+    sa.UniqueConstraint('name', 'network_uuid')
     )
     op.create_table('points',
     sa.Column('created_on', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
@@ -87,6 +88,7 @@ def upgrade():
     sa.Column('write_value_once', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['device_uuid'], ['devices.uuid'], ),
     sa.PrimaryKeyConstraint('uuid'),
+    sa.UniqueConstraint('name', 'device_uuid'),
     sa.UniqueConstraint('register', 'function_code', 'device_uuid_constraint')
     )
     op.create_table('mappings_mp_gbp',

@@ -2,7 +2,7 @@ import shortuuid
 from flask_restful import reqparse
 from rubix_http.resource import RubixResource
 
-from src.models.device.device import DeviceModel
+from src.models.model_device import DeviceModel
 from src.resources.rest_schema.schema_device import device_all_attributes, device_all_fields, \
     device_all_fields_with_children
 from src.resources.utils import model_marshaller_with_children

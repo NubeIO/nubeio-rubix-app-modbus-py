@@ -3,8 +3,8 @@ from typing import List
 
 from gevent import thread
 
-from src.models.point.point import PointModel
-from src.models.point.point_store import PointStoreModel
+from src.models.model_point import PointModel
+from src.models.model_point_store import PointStoreModel
 from src.services.mqtt_client import MqttRegistry
 from src.utils import Singleton
 

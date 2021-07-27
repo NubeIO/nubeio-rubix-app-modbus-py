@@ -57,7 +57,7 @@ class Background:
     @staticmethod
     def sync_on_start():
         from rubix_http.request import gw_request
-        from .models.point.point_store import PointStoreModel
+        from src.models.model_point_store import PointStoreModel
 
         """Sync mapped points values from LoRa > Generic points values"""
         gw_request(api='/lora/api/sync/lp_to_gp')

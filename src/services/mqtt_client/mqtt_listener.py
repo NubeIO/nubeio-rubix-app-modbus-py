@@ -11,9 +11,9 @@ from rubix_mqtt.mqtt import MqttClientBase
 
 from src import FlaskThread
 from src.handlers.exception import exception_handler
-from src.models.device.device import DeviceModel
-from src.models.network.network import NetworkModel
-from src.models.point.point import PointModel
+from src.models.model_device import DeviceModel
+from src.models.model_network import NetworkModel
+from src.models.model_point import PointModel
 from src.setting import MqttSetting
 
 logger = logging.getLogger(__name__)

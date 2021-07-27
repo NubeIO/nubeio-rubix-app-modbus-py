@@ -2,9 +2,9 @@ import shortuuid
 from flask_restful import reqparse
 from rubix_http.resource import RubixResource
 
-from src.models.point.point import PointModel
+from src.models.model_point import PointModel
 from src.resources.rest_schema.schema_point import point_all_attributes, add_nested_priority_array_write
-from src.models.point.priority_array import PriorityArrayModel
+from src.models.model_priority_array import PriorityArrayModel
 
 
 class PointBaseResource(RubixResource):

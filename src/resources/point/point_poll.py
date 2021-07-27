@@ -3,14 +3,14 @@ from rubix_http.exceptions.exception import NotFoundException
 from rubix_http.resource import RubixResource
 
 from src.enums.drivers import Drivers
-from src.models.device.device import DeviceModel
-from src.models.network.network import NetworkModel
-from src.models.point.point import PointModel
+from src.models.model_device import DeviceModel
+from src.models.model_network import NetworkModel
+from src.models.model_point import PointModel
 from src.resources.rest_schema.schema_point import poll_non_existing_attributes, \
     point_store_fields, point_all_fields
 from src.services.modbus.polling.modbus_polling import ModbusPolling
 from src.event_dispatcher import EventDispatcher
-from src.models.point.priority_array import PriorityArrayModel
+from src.models.model_priority_array import PriorityArrayModel
 from src.services.event_service_base import EventCallableBlocking
 
 

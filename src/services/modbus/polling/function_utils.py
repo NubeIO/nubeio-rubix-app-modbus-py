@@ -4,8 +4,8 @@ from pymodbus.constants import Endian
 from pymodbus.payload import BinaryPayloadDecoder, BinaryPayloadBuilder
 
 from src.enums.point import ModbusDataEndian, ModbusDataType
-from src.models.point.point import PointModel
-from src.models.point.priority_array import PriorityArrayModel
+from src.models.model_point import PointModel
+from src.models.model_priority_array import PriorityArrayModel
 
 
 def _set_data_length(data_type: ModbusDataType, reg_length: int) -> int:

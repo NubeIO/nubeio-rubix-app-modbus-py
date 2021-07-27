@@ -1,7 +1,7 @@
 from rubix_http.resource import RubixResource
 
 from src.background import Background
-from src.models.point.point_store import PointStoreModel
+from src.models.model_point_store import PointStoreModel
 
 
 class MPToBPSyncResource(RubixResource):

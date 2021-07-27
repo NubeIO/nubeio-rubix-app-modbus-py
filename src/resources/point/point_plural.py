@@ -1,6 +1,6 @@
 from flask_restful import marshal_with
 
-from src.models.point.point import PointModel
+from src.models.model_point import PointModel
 from src.resources.point.point_base import PointBaseResource
 from src.resources.rest_schema.schema_point import point_all_fields
 

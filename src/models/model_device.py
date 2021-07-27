@@ -6,8 +6,8 @@ from sqlalchemy.orm import validates
 
 from src import db
 from src.enums.network import ModbusType
-from src.models.point.point import PointModel
-from src.models.network.network import NetworkModel
+from src.models.model_point import PointModel
+from src.models.model_network import NetworkModel
 
 from src.models.model_base import ModelBase
 from src.utils.model_utils import validate_json

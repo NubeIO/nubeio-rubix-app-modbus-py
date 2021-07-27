@@ -10,8 +10,8 @@ from sqlalchemy import and_, or_
 
 from src import db
 from src.enums.mapping import MapType, MappingState
-from src.models.mapping.mapping import MPGBPMapping
-from src.models.point.priority_array import PriorityArrayModel
+from src.models.model_mapping import MPGBPMapping
+from src.models.model_priority_array import PriorityArrayModel
 from src.utils.model_utils import get_datetime
 
 

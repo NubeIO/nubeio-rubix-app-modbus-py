@@ -1,6 +1,6 @@
 from flask_restful.reqparse import request
 
-from src.models.device.device import DeviceModel
+from src.models.model_device import DeviceModel
 from src.resources.device.device_base import DeviceBaseResource, device_marshaller
 
 

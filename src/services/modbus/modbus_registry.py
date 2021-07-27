@@ -6,7 +6,7 @@ import shortuuid
 from pymodbus.client.sync import BaseModbusClient
 
 from src.enums.network import ModbusType
-from src.models.network.network import NetworkModel
+from src.models.model_network import NetworkModel
 from src.utils import Singleton
 
 logger = logging.getLogger(__name__)
