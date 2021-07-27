@@ -9,9 +9,9 @@ from src.enums.point import ModbusFunctionCode, ModbusDataType, ModbusDataEndian
 from src.models.device.device import DeviceModel
 from src.models.network.network import NetworkModel
 from src.models.point.point import PointModel
-from src.services.polling.function_utils import _mod_point_data_endian, convert_to_data_type, \
+from src.services.modbus.polling.function_utils import _mod_point_data_endian, convert_to_data_type, \
     pack_point_write_registers
-from src.services.polling.functions import read_digital, write_digital, \
+from src.services.modbus.polling.functions import read_digital, write_digital, \
     read_analogue, write_analogue, write_analogue_aggregate
 from src.models.point.point_store import PointStoreModel
 from src.models.point.priority_array import PriorityArrayModel
@@ -86,7 +86,7 @@ def poll_point_aggregate(service: EventServiceBase, client: BaseModbusClient, ne
             point_store_new = PointStoreModel(fault=fault, fault_message=fault_message, point_uuid=point.uuid)
 
         try:
-            if point.update_point_value(point_store_new, point.driver):
+            if point.update_point_value(point_store_new):
                 point.publish_cov(point_store_new, device, network, service.service_name)
         except BaseException as e:
             logger.error(e)
@@ -146,7 +146,7 @@ def poll_point(service: EventServiceBase, client: BaseModbusClient, network: Net
 
     if update:
         try:
-            is_updated = point.update_point_value(point_store_new, point.driver)
+            is_updated = point.update_point_value(point_store_new)
         except BaseException as e:
             logger.error(e)
             return point_store_new

@@ -1,2 +1,33 @@
 {
+  "drivers": {
+    "modbus_rtu": true,
+    "modbus_tcp": false
+  },
+  "services": {
+    "mqtt": true
+  },
+  "mqtt": [
+    {
+      "enabled": true,
+      "cloud": false,
+      "name": "rubix-points",
+      "host": "0.0.0.0",
+      "port": 1883,
+      "authentication": false,
+      "username": "username",
+      "password": "password",
+      "keepalive": 60,
+      "qos": 1,
+      "attempt_reconnect_on_unavailable": true,
+      "attempt_reconnect_secs": 5,
+      "timeout": 10,
+      "retain_clear_interval": 10,
+      "publish_value": true,
+      "topic": "rubix/points/value",
+      "listen": true,
+      "listen_topic": "rubix/points/listen",
+      "publish_debug": true,
+      "debug_topic": "rubix/points/debug"
+    }
+  ]
 }

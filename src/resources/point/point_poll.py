@@ -8,7 +8,7 @@ from src.models.network.network import NetworkModel
 from src.models.point.point import PointModel
 from src.resources.rest_schema.schema_point import poll_non_existing_attributes, \
     point_store_fields, point_all_fields
-from src.services.polling.modbus_polling import ModbusPolling
+from src.services.modbus.polling.modbus_polling import ModbusPolling
 from src.event_dispatcher import EventDispatcher
 from src.models.point.priority_array import PriorityArrayModel
 from src.services.event_service_base import EventCallableBlocking
@@ -20,7 +20,7 @@ class PointPollResource(RubixResource):
     def get(cls, uuid: str):
         point = PointModel.find_by_uuid(uuid)
         if not point:
-            raise NotFoundException('Modbus Point not found')
+            raise NotFoundException('Point not found')
         else:
             event = EventCallableBlocking(ModbusPolling.poll_point, (point,))
             EventDispatcher().dispatch_to_source_only(event, Drivers.MODBUS.name)

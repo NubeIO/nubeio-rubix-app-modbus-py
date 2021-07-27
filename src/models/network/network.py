@@ -1,9 +1,12 @@
+import re
+
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import validates
 
 from src import db
 from src.enums.network import ModbusType, ModbusRtuParity
 from src.models.model_base import ModelBase
+from src.utils.model_utils import validate_json
 
 
 class NetworkModel(ModelBase):
@@ -31,6 +34,30 @@ class NetworkModel(ModelBase):
         UniqueConstraint('tcp_ip', 'tcp_port'),
     )
 
+    def __repr__(self):
+        return f"Network(uuid = {self.uuid})"
+
+    @validates('tags')
+    def validate_tags(self, _, value):
+        """
+        Rules for tags:
+        - force all tags to be lower case
+        - if there is a gap add an underscore
+        - no special characters
+        """
+        if value is not None:
+            try:
+                return validate_json(value)
+            except ValueError:
+                raise ValueError('tags needs to be a valid JSON')
+        return value
+
+    @validates('name')
+    def validate_name(self, _, value):
+        if not re.match("^([A-Za-z0-9_-])+$", value):
+            raise ValueError("name should be alphanumeric and can contain '_', '-'")
+        return value
+
     @validates('type')
     def validate_type(self, _, value):
         if value == ModbusType.RTU.name:
@@ -45,3 +72,12 @@ class NetworkModel(ModelBase):
             if not self.tcp_port:
                 raise ValueError("tcp_port should be be there on type TCP")
         return value
+
+    @classmethod
+    def find_by_name(cls, network_name: str):
+        results = cls.query.filter_by(name=network_name).first()
+        return results
+
+    def set_fault(self, is_fault: bool):
+        self.fault = is_fault
+        db.session.commit()

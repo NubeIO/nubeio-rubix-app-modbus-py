@@ -23,7 +23,7 @@ class PointValueWriterBaseResource(RubixResource):
         data = cls.patch_parser.parse_args()
         point: PointModel = cls.get_point(**kwargs)
         if not point:
-            raise NotFoundException('Modbus Point not found')
+            raise NotFoundException('Point not found')
         if not point.writable:
             raise BadDataException('Point is not writable')
         point.update_priority_value(value=data.get('value'),

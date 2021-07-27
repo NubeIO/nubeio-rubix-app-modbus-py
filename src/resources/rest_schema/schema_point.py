@@ -190,6 +190,7 @@ poll_non_existing_attributes = {
     },
 }
 
+
 def add_nested_priority_array_write():
     nested_priority_array_write_parser = reqparse.RequestParser()
     nested_priority_array_write_parser.add_argument('_1', type=float, location=('priority_array_write',))

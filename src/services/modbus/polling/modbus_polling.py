@@ -14,10 +14,10 @@ from src.enums.point import ModbusFunctionCode
 from src.models.device.device import DeviceModel
 from src.models.network.network import NetworkModel, ModbusType
 from src.models.point.point import PointModel
-from src.services.modbus_registry import ModbusRegistryConnection, ModbusRegistry
-from src.services.modbus_rtu_registry import ModbusRtuRegistry
-from src.services.modbus_tcp_registry import ModbusTcpRegistry, ModbusTcpRegistryKey
-from src.services.polling.poll import poll_point, poll_point_aggregate
+from src.services.modbus.modbus_registry import ModbusRegistryConnection, ModbusRegistry
+from src.services.modbus.modbus_rtu_registry import ModbusRtuRegistry
+from src.services.modbus.modbus_tcp_registry import ModbusTcpRegistry, ModbusTcpRegistryKey
+from src.services.modbus.polling.poll import poll_point, poll_point_aggregate
 from src.event_dispatcher import EventDispatcher
 from src.models.point.point_store import PointStoreModel
 from src.models.point.priority_array import PriorityArrayModel

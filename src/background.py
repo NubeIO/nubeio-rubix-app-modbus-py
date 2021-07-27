@@ -27,7 +27,32 @@ class Background:
 
     @staticmethod
     def run():
-        setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
+        setting: AppSetting = current_app.config[AppSetting.KEY]
+        logger.info("Starting Drivers...")
+        if setting.services.mqtt:
+            from src.services.mqtt_client import MqttClient
+            for config in setting.mqtt_settings:
+                if not config.enabled:
+                    continue
+                mqtt_client = MqttClient()
+                FlaskThread(target=mqtt_client.start, daemon=True, kwargs={'config': config}).start()
+        if setting.drivers.modbus_tcp:
+            from src.services.modbus.polling.modbus_polling import TcpPolling, ModbusTcpRegistry
+            ModbusTcpRegistry().register()
+            FlaskThread(target=TcpPolling().polling, daemon=True).start()
+
+        if setting.drivers.modbus_rtu:
+            from src.services.modbus.polling.modbus_polling import RtuPolling, ModbusRtuRegistry
+            ModbusRtuRegistry().register()
+            FlaskThread(target=RtuPolling().polling, daemon=True).start()
+
+        # Sync
+        logger.info("Starting Sync Services...")
+
+        Background.sync_on_start()
+        if setting.services.mqtt and any(config.enabled for config in setting.mqtt_settings):
+            from .services.mqtt_republish import MqttRepublish
+            FlaskThread(target=MqttRepublish().republish, daemon=True).start()
 
     @staticmethod
     def sync_on_start():

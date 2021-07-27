@@ -26,7 +26,7 @@ class Ping(RubixResource):
         up_hour = up_time / 3600
         up_hour = "{:.2f}".format(up_hour)
         from src import AppSetting
-        setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
+        setting: AppSetting = current_app.config[AppSetting.KEY]
         deployment_mode = 'production' if setting.prod else 'development'
 
         return {
