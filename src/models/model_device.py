@@ -26,12 +26,11 @@ class DeviceModel(ModelBase):
     zero_based = db.Column(db.Boolean(), nullable=False, default=False)
     ping_point = db.Column(db.String(10))
     supports_multiple_rw = db.Column(db.Boolean(), nullable=False, default=False)
-    network_uuid_constraint = db.Column(db.String, nullable=False)
     points = db.relationship('PointModel', cascade="all,delete", backref='device', lazy=True)
 
     __table_args__ = (
         UniqueConstraint('name', 'network_uuid'),
-        UniqueConstraint('address', 'network_uuid_constraint'),
+        UniqueConstraint('address', 'network_uuid'),
     )
 
     def __repr__(self):

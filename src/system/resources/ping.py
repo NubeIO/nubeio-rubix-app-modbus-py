@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import current_app
 from rubix_http.resource import RubixResource
 
+from src.services.mqtt_client import MqttRegistry
 from src.utils.project import get_version
 
 start_time = time.time()
@@ -35,4 +36,9 @@ class Ping(RubixResource):
             'up_min': up_min,
             'up_hour': up_hour,
             'deployment_mode': deployment_mode,
+            'mqtt_client_statuses': [{mqttc.to_string(): mqttc.status()} for mqttc in MqttRegistry().clients()],
+            'settings': {
+                setting.services.KEY: setting.services.to_dict(),
+                setting.drivers.KEY: setting.drivers.to_dict()
+            }
         }

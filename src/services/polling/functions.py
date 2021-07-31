@@ -6,7 +6,7 @@ from pymodbus.client.sync import BaseModbusClient
 from pymodbus.exceptions import ModbusIOException
 
 from src.enums.point import ModbusFunctionCode, ModbusDataType, ModbusDataEndian
-from src.services.modbus.polling.function_utils import _set_data_length, _assertion, \
+from src.services.polling.function_utils import _set_data_length, _assertion, \
     _mod_point_data_endian, convert_to_data_type, _builder_data_type
 
 logger = logging.getLogger(__name__)

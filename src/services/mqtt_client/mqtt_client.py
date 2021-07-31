@@ -38,7 +38,6 @@ class MqttClient(MqttListener, EventServiceBase):
         EventServiceBase.__init__(self, SERVICE_NAME_MQTT_CLIENT, False)
         self.supported_events[EventType.POINT_COV] = True
         self.supported_events[EventType.MQTT_DEBUG] = True
-        self.supported_events[EventType.POINT_REGISTRY_UPDATE] = True
 
     @property
     def config(self) -> MqttSetting:
@@ -90,9 +89,6 @@ class MqttClient(MqttListener, EventServiceBase):
             return
         if event.event_type == EventType.MQTT_DEBUG and self.config.publish_debug:
             self._publish_mqtt_value(self.__make_topic((self.config.debug_topic,)), event.data, False)
-
-        if event.event_type == EventType.POINT_REGISTRY_UPDATE and self.config.publish_value:
-            self._publish_mqtt_value(self.__make_topic((self.config.topic, 'points')), event.data)
 
         elif event.event_type == EventType.POINT_COV:
             self._publish_cov(event.data.get('driver_name'),

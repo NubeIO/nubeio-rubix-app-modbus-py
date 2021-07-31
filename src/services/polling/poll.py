@@ -9,9 +9,9 @@ from src.enums.point import ModbusFunctionCode, ModbusDataType, ModbusDataEndian
 from src.models.model_device import DeviceModel
 from src.models.model_network import NetworkModel
 from src.models.model_point import PointModel
-from src.services.modbus.polling.function_utils import _mod_point_data_endian, convert_to_data_type, \
+from src.services.polling.function_utils import _mod_point_data_endian, convert_to_data_type, \
     pack_point_write_registers
-from src.services.modbus.polling.functions import read_digital, write_digital, \
+from src.services.polling.functions import read_digital, write_digital, \
     read_analogue, write_analogue, write_analogue_aggregate
 from src.models.model_point_store import PointStoreModel
 from src.models.model_priority_array import PriorityArrayModel

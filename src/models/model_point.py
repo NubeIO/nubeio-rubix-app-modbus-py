@@ -44,13 +44,12 @@ class PointModel(ModelBase):
     function_code = db.Column(db.Enum(ModbusFunctionCode), nullable=False)
     data_type = db.Column(db.Enum(ModbusDataType), nullable=False, default=ModbusDataType.RAW)
     data_endian = db.Column(db.Enum(ModbusDataEndian), nullable=False, default=ModbusDataEndian.BEB_LEW)
-    device_uuid_constraint = db.Column(db.String, nullable=False)
     write_value_once = db.Column(db.Boolean(), nullable=False, default=False)
     mp_gbp_mapping = db.relationship('MPGBPMapping', backref='point', lazy=True, uselist=False, cascade="all,delete")
 
     __table_args__ = (
         UniqueConstraint('name', 'device_uuid'),
-        UniqueConstraint('register', 'function_code', 'device_uuid_constraint'),
+        UniqueConstraint('register', 'function_code', 'device_uuid'),
     )
 
     def __repr__(self):
@@ -179,7 +178,6 @@ class PointModel(ModelBase):
 
     def check_self(self) -> (bool, any):
         super().check_self()
-        self.device_uuid_constraint = self.device_uuid
 
         reg_length = self.register_length
         point_fc: ModbusFunctionCode = self.function_code

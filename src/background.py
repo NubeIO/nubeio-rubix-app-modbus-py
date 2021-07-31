@@ -37,12 +37,12 @@ class Background:
                 mqtt_client = MqttClient()
                 FlaskThread(target=mqtt_client.start, daemon=True, kwargs={'config': config}).start()
         if setting.drivers.modbus_tcp:
-            from src.services.modbus.polling.modbus_polling import TcpPolling, ModbusTcpRegistry
+            from src.services.polling.modbus_polling import TcpPolling, ModbusTcpRegistry
             ModbusTcpRegistry().register()
             FlaskThread(target=TcpPolling().polling, daemon=True).start()
 
         if setting.drivers.modbus_rtu:
-            from src.services.modbus.polling.modbus_polling import RtuPolling, ModbusRtuRegistry
+            from src.services.polling.modbus_polling import RtuPolling, ModbusRtuRegistry
             ModbusRtuRegistry().register()
             FlaskThread(target=RtuPolling().polling, daemon=True).start()
 

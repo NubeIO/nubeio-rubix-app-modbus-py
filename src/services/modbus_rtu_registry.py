@@ -3,7 +3,7 @@ import logging
 from pymodbus.client.sync import ModbusSerialClient as SerialClient
 
 from src.models.model_network import NetworkModel, ModbusType
-from src.services.modbus.modbus_registry import ModbusRegistry, ModbusRegistryConnection, \
+from src.services.modbus_registry import ModbusRegistry, ModbusRegistryConnection, \
     ModbusRegistryKey
 
 logger = logging.getLogger(__name__)

@@ -15,7 +15,6 @@ class EventType(IntEnum):
     POINT_COV = auto()
     MAPPING_MODEL = auto()
     MQTT_DEBUG = auto()
-    POINT_REGISTRY_UPDATE = auto()
 
 
 # TODO: implement event queue overload warning and clearing
