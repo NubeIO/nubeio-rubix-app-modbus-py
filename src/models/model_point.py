@@ -6,13 +6,12 @@ from sqlalchemy.orm import validates
 
 from src import db
 from src.enums.drivers import Drivers
-from src.enums.point import ModbusFunctionCode, ModbusDataType, ModbusDataEndian, HistoryType
+from src.enums.point import ModbusFunctionCode, ModbusDataType, ModbusDataEndian
 from src.models.model_network import NetworkModel
 from src.models.model_point_store import PointStoreModel
 from src.models.model_priority_array import PriorityArrayModel
 
 from src.models.model_base import ModelBase
-from src.services.event_service_base import Event, EventType
 from src.utils.math_functions import eval_arithmetic_expression
 from src.utils.model_utils import validate_json
 
@@ -83,12 +82,6 @@ class PointModel(ModelBase):
                 return validate_json(value)
             except ValueError:
                 raise ValueError('tags needs to be a valid JSON')
-        return value
-
-    @validates('history_interval')
-    def validate_history_interval(self, _, value):
-        if self.history_type == HistoryType.INTERVAL and value is not None and value < 1:
-            raise ValueError("history_interval needs to be at least 1, default is 15 (in minutes)")
         return value
 
     @validates('input_min')
@@ -181,7 +174,6 @@ class PointModel(ModelBase):
 
         reg_length = self.register_length
         point_fc: ModbusFunctionCode = self.function_code
-
         if self.is_writable(point_fc):
             self.writable = True
             if not self.priority_array_write:
@@ -196,7 +188,7 @@ class PointModel(ModelBase):
                 self.function_code = ModbusFunctionCode.WRITE_REGISTER
         else:
             self.writable = False
-            if self.priority_array_write:
+            if self.priority_array_write and self.priority_array_write.point_uuid:
                 self.priority_array_write.delete_from_db()
 
         data_type = self.data_type
@@ -237,16 +229,9 @@ class PointModel(ModelBase):
         if device is None or network is None:
             raise Exception(f'Cannot find network or device for point {self.uuid}')
         priority = self._get_highest_priority_field()
-        from src.event_dispatcher import EventDispatcher
-        EventDispatcher().dispatch_from_source(None, Event(EventType.POINT_COV, {
-            'point': self,
-            'point_store': point_store,
-            'device': device,
-            'network': network,
-            'driver_name': Drivers.MODBUS.name,
-            'clear_value': force_clear or False,
-            'priority': priority
-        }))
+        from src.services.mqtt_client import MqttClient
+        MqttClient.publish_point_cov(
+            Drivers.MODBUS.name, network, device, self, point_store, force_clear, priority)
 
     def update(self, **kwargs) -> bool:
         changed: bool = super().update(**kwargs)
@@ -343,4 +328,3 @@ class PointModel(ModelBase):
     def is_writable_by_str(value: str) -> bool:
         return value in [ModbusFunctionCode.WRITE_COIL.name, ModbusFunctionCode.WRITE_COILS.name,
                          ModbusFunctionCode.WRITE_REGISTER.name, ModbusFunctionCode.WRITE_REGISTERS.name]
-

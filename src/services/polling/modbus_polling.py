@@ -4,12 +4,12 @@ from abc import abstractmethod
 from copy import deepcopy
 from typing import Union, List
 
+from gevent import sleep
 from pymodbus.client.sync import BaseModbusClient
 from pymodbus.exceptions import ConnectionException, ModbusIOException
 from sqlalchemy.orm.exc import ObjectDeletedError
 
 from src import db, FlaskThread
-from src.enums.drivers import Drivers
 from src.enums.point import ModbusFunctionCode
 from src.models.model_device import DeviceModel
 from src.models.model_network import NetworkModel, ModbusType
@@ -18,37 +18,25 @@ from src.services.modbus_registry import ModbusRegistryConnection, ModbusRegistr
 from src.services.modbus_rtu_registry import ModbusRtuRegistry
 from src.services.modbus_tcp_registry import ModbusTcpRegistry, ModbusTcpRegistryKey
 from src.services.polling.poll import poll_point, poll_point_aggregate
-from src.event_dispatcher import EventDispatcher
 from src.models.model_point_store import PointStoreModel
 from src.models.model_priority_array import PriorityArrayModel
-from src.services.event_service_base import EventServiceBase, EventType, HandledByDifferentServiceException, Event
+from src.utils import Singleton
 
 logger = logging.getLogger(__name__)
 
 
-class ModbusPolling(EventServiceBase):
+class ModbusPolling(metaclass=Singleton):
     __polling_interval: int = 2
     __count: int = 0
 
     def __init__(self, network_type: ModbusType):
-        super().__init__(Drivers.MODBUS.name, True)
         self.__network_type = network_type
-        self.supported_events[EventType.INTERNAL_SERVICE_TIMEOUT] = True
-        self.supported_events[EventType.CALLABLE] = True
-        EventDispatcher().add_driver(self)
 
     def polling(self):
-        self._set_internal_service_timeout(1)
+        sleep(1)
         self.__log_info("Polling started")
         while True:
-            event: Event = self._event_queue.get()
-            if event.event_type is EventType.INTERNAL_SERVICE_TIMEOUT:
-                self.__poll()
-                self._set_internal_service_timeout(ModbusPolling.__polling_interval)
-            elif event.event_type is EventType.CALLABLE:
-                self._handle_internal_callable(event)
-            else:
-                self._handle_internal_callable(event)
+            self.__poll()
 
     def __poll(self):
         self.__count += 1
@@ -210,24 +198,20 @@ class ModbusPolling(EventServiceBase):
     def poll_point_not_existing(self, point: PointModel, device: DeviceModel, network: NetworkModel):
         self.__log_debug(f'Manual poll request Non Existing Point {point}')
         connection: ModbusRegistryConnection = self.get_registry().add_edit_and_get_connection(network)
-        # TODO network.type is in string for should be on Enum check `ModelBase > create_temporary`
-        if network.type != self.__network_type.name:
-            raise HandledByDifferentServiceException
         point_store = self.__poll_point(connection.client, network, device, [point], False, False)
         return point_store
 
     def poll_point(self, point: PointModel) -> PointModel:
         self.__log_debug(f'Manual poll request {point}')
         device: DeviceModel = DeviceModel.find_by_uuid(point.device_uuid)
-        if device.type is not self.__network_type:
-            raise HandledByDifferentServiceException
         network: NetworkModel = NetworkModel.find_by_uuid(device.network_uuid)
         self.__log_debug(f'Manual poll request: network: {network.uuid}, device: {device.uuid}, point: {point.uuid}')
         connection: ModbusRegistryConnection = self.get_registry().add_edit_and_get_connection(network)
         self.__poll_point(connection.client, network, device, [point])
         return point
 
-    def __poll_point(self, client: BaseModbusClient, network: NetworkModel, device: DeviceModel,
+    @staticmethod
+    def __poll_point(client: BaseModbusClient, network: NetworkModel, device: DeviceModel,
                      point_list: List[PointModel], update_all: bool = True,
                      update_point_store: bool = True) -> Union[PointStoreModel, None]:
         point_store: Union[PointStoreModel, None] = None
@@ -244,9 +228,9 @@ class ModbusPolling(EventServiceBase):
                     error = None
                     try:
                         if len(point_list) == 1:
-                            point_store = poll_point(self, client, network, device, point_list[0], update_point_store)
+                            point_store = poll_point(client, network, device, point_list[0], update_point_store)
                         elif len(point_list) > 1:
-                            poll_point_aggregate(self, client, network, device, point_list)
+                            poll_point_aggregate(client, network, device, point_list)
                         else:
                             raise Exception("Invalid __poll_point point_list length")
                     except ConnectionException as e:
@@ -269,7 +253,7 @@ class ModbusPolling(EventServiceBase):
                 except ObjectDeletedError:
                     return None
         else:
-            point_store = poll_point(self, client, network, device, point_list[0], update_point_store)
+            point_store = poll_point(client, network, device, point_list[0], update_point_store)
         return point_store
 
     @abstractmethod
@@ -286,7 +270,7 @@ class ModbusPolling(EventServiceBase):
         logger.debug(f'{self.__network_type.name}: {message}')
 
 
-class RtuPolling(ModbusPolling, ):
+class RtuPolling(ModbusPolling):
 
     def __init__(self):
         super().__init__(ModbusType.RTU)

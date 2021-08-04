@@ -2,33 +2,28 @@ from flask_restful import reqparse, marshal_with
 from rubix_http.exceptions.exception import NotFoundException
 from rubix_http.resource import RubixResource
 
-from src.enums.drivers import Drivers
+from src.enums.network import ModbusType
 from src.models.model_device import DeviceModel
 from src.models.model_network import NetworkModel
 from src.models.model_point import PointModel
 from src.resources.rest_schema.schema_point import poll_non_existing_attributes, \
     point_store_fields, point_all_fields
-from src.services.polling.modbus_polling import ModbusPolling
-from src.event_dispatcher import EventDispatcher
+from src.services.polling.modbus_polling import RtuPolling, TcpPolling
 from src.models.model_priority_array import PriorityArrayModel
-from src.services.event_service_base import EventCallableBlocking
 
 
 class PointPollResource(RubixResource):
     @classmethod
     @marshal_with(point_all_fields)
     def get(cls, uuid: str):
-        point = PointModel.find_by_uuid(uuid)
+        point: PointModel = PointModel.find_by_uuid(uuid)
         if not point:
             raise NotFoundException('Modbus Point not found')
         else:
-            event = EventCallableBlocking(ModbusPolling.poll_point, (point,))
-            EventDispatcher().dispatch_to_source_only(event, Drivers.MODBUS.name)
-            event.condition.wait()
-            if event.error:
-                raise Exception(str(event.data))
+            if point.device.type == ModbusType.RTU:
+                return RtuPolling().poll_point(point)
             else:
-                return event.data, 200
+                return TcpPolling().poll_point(point)
 
 
 class PointPollNonExistingResource(RubixResource):
@@ -58,10 +53,7 @@ class PointPollNonExistingResource(RubixResource):
         device.check_self()
         point.check_self()
 
-        event = EventCallableBlocking(ModbusPolling.poll_point_not_existing, (point, device, network))
-        EventDispatcher().dispatch_to_source_only(event, Drivers.MODBUS.name)
-        event.condition.wait()
-        if event.error:
-            raise Exception(str(event.data))
+        if device.type == ModbusType.RTU:
+            return RtuPolling().poll_point_not_existing(point, device, network)
         else:
-            return event.data, 200
+            return TcpPolling().poll_point_not_existing(point, device, network)

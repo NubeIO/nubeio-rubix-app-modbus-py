@@ -15,12 +15,11 @@ from src.services.polling.functions import read_digital, write_digital, \
     read_analogue, write_analogue, write_analogue_aggregate
 from src.models.model_point_store import PointStoreModel
 from src.models.model_priority_array import PriorityArrayModel
-from src.services.event_service_base import EventServiceBase
 
 logger = logging.getLogger(__name__)
 
 
-def poll_point_aggregate(service: EventServiceBase, client: BaseModbusClient, network: NetworkModel,
+def poll_point_aggregate(client: BaseModbusClient, network: NetworkModel,
                          device: DeviceModel, point_slice) -> None:
     device_address: int = device.address
     zero_based: bool = device.zero_based
@@ -87,7 +86,7 @@ def poll_point_aggregate(service: EventServiceBase, client: BaseModbusClient, ne
 
         try:
             if point.update_point_value(point_store_new):
-                point.publish_cov(point_store_new, device, network, service.service_name)
+                point.publish_cov(point_store_new, device, network)
         except BaseException as e:
             logger.error(e)
 
@@ -95,11 +94,10 @@ def poll_point_aggregate(service: EventServiceBase, client: BaseModbusClient, ne
         raise error
 
 
-def poll_point(service: EventServiceBase, client: BaseModbusClient, network: NetworkModel,
+def poll_point(client: BaseModbusClient, network: NetworkModel,
                device: DeviceModel, point: PointModel, update: bool) -> PointStoreModel:
     """
     Main modbus polling loop
-    :param service: EventServiceBase object that's calling this (for point COV events)
     :param client: pymodbus network connection
     :param network: modbus network class
     :param device: modbus device class
@@ -151,7 +149,7 @@ def poll_point(service: EventServiceBase, client: BaseModbusClient, network: Net
             logger.error(e)
             return point_store_new
         if is_updated:
-            point.publish_cov(point_store_new, device, network, service.service_name)
+            point.publish_cov(point_store_new, device, network)
 
     if error is not None:
         raise error

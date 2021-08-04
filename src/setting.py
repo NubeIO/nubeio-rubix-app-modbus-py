@@ -1,6 +1,5 @@
 import json
 import os
-from typing import List
 
 from flask import Flask
 from rubix_mqtt.setting import MqttSettingBase
@@ -20,17 +19,6 @@ class BaseSetting:
         return json.loads(self.serialize(pretty=False))
 
 
-class ServiceSetting(BaseSetting):
-    """
-    Declares an availability service(enabled/disabled option)
-    """
-
-    KEY = 'services'
-
-    def __init__(self):
-        self.mqtt = True
-
-
 class DriverSetting(BaseSetting):
     """
     Declares an availability driver(enabled/disabled option)
@@ -48,7 +36,6 @@ class MqttSetting(MqttSettingBase):
 
     def __init__(self):
         super(MqttSetting, self).__init__()
-        self.cloud = False
         self.name = 'rubix-points'
         self.retain_clear_interval = 60
         self.publish_value = True
@@ -82,8 +69,7 @@ class AppSetting:
                                                self.__join_global_dir(AppSetting.default_config_dir))
         self.__prod = kwargs.get('prod') or False
         self.__driver_setting = DriverSetting()
-        self.__service_setting = ServiceSetting()
-        self.__mqtt_settings: List[MqttSetting] = [MqttSetting()]
+        self.__mqtt_setting = MqttSetting()
 
     @property
     def port(self):
@@ -106,22 +92,17 @@ class AppSetting:
         return self.__prod
 
     @property
-    def services(self) -> ServiceSetting:
-        return self.__service_setting
-
-    @property
     def drivers(self) -> DriverSetting:
         return self.__driver_setting
 
     @property
-    def mqtt_settings(self) -> List[MqttSetting]:
-        return self.__mqtt_settings
+    def mqtt_setting(self) -> MqttSetting:
+        return self.__mqtt_setting
 
     def serialize(self, pretty=True) -> str:
         m = {
             DriverSetting.KEY: self.drivers,
-            ServiceSetting.KEY: self.services,
-            MqttSetting.KEY: [s.to_dict() for s in self.mqtt_settings],
+            MqttSetting.KEY: self.mqtt_setting,
             'prod': self.prod, 'global_dir': self.global_dir, 'data_dir': self.data_dir, 'config_dir': self.config_dir
         }
         return json.dumps(m, default=lambda o: o.to_dict() if isinstance(o, BaseSetting) else o.__dict__,
@@ -130,10 +111,7 @@ class AppSetting:
     def reload(self, setting_file: str, is_json_str: bool = False):
         data = self.__read_file(setting_file, self.__config_dir, is_json_str)
         self.__driver_setting = self.__driver_setting.reload(data.get(DriverSetting.KEY))
-        self.__service_setting = self.__service_setting.reload(data.get(ServiceSetting.KEY))
-        mqtt_settings = data.get(MqttSetting.KEY, [])
-        if len(mqtt_settings) > 0:
-            self.__mqtt_settings = [MqttSetting().reload(s) for s in mqtt_settings]
+        self.__mqtt_setting = self.__mqtt_setting.reload(data.get(MqttSetting.KEY, None))
         return self
 
     def init_app(self, app: Flask):

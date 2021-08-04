@@ -29,13 +29,9 @@ class Background:
     def run():
         setting: AppSetting = current_app.config[AppSetting.KEY]
         logger.info("Starting Drivers...")
-        if setting.services.mqtt:
-            from src.services.mqtt_client import MqttClient
-            for config in setting.mqtt_settings:
-                if not config.enabled:
-                    continue
-                mqtt_client = MqttClient()
-                FlaskThread(target=mqtt_client.start, daemon=True, kwargs={'config': config}).start()
+        from src.services.mqtt_client import MqttClient
+        if setting.mqtt_setting.enabled:
+            MqttClient().start(setting.mqtt_setting)
         if setting.drivers.modbus_tcp:
             from src.services.polling.modbus_polling import TcpPolling, ModbusTcpRegistry
             ModbusTcpRegistry().register()
@@ -50,20 +46,13 @@ class Background:
         logger.info("Starting Sync Services...")
 
         Background.sync_on_start()
-        if setting.services.mqtt and any(config.enabled for config in setting.mqtt_settings):
+        if setting.mqtt_setting.enabled:
             from .services.mqtt_republish import MqttRepublish
             FlaskThread(target=MqttRepublish().republish, daemon=True).start()
 
     @staticmethod
     def sync_on_start():
-        from rubix_http.request import gw_request
         from src.models.model_point_store import PointStoreModel
-
-        """Sync mapped points values from LoRa > Generic points values"""
-        gw_request(api='/lora/api/sync/lp_to_gp')
-
-        """Sync mapped points values from BACnet > Generic points values"""
-        gw_request(api='/bacnet/api/sync/bp_to_gp')
 
         """Sync mapped points values from Modbus > Generic | BACnet points values"""
         PointStoreModel.sync_points_values_mp_to_gbp_process()

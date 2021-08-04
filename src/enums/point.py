@@ -28,9 +28,3 @@ class ModbusDataEndian(enum.Enum):
     LEB_LEW = 2
     BEB_LEW = 3
     BEB_BEW = 4
-
-
-class HistoryType(enum.Enum):
-    COV = 0,
-    INTERVAL = 1
-    COV_AND_INTERVAL = 2
