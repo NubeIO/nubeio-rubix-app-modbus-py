@@ -37,6 +37,7 @@ class ModbusPolling(metaclass=Singleton):
         self.__log_info("Polling started")
         while True:
             self.__poll()
+            sleep(ModbusPolling.__polling_interval)
 
     def __poll(self):
         self.__count += 1
@@ -142,17 +143,17 @@ class ModbusPolling(metaclass=Singleton):
                             - response size limit reached
                             - next point is not continuous from current point
                         """
-                        if i == len(fc_list) - 1 or response_size + fc_list[i+1].register_length >= 253 or \
+                        if i == len(fc_list) - 1 or response_size + fc_list[i + 1].register_length >= 253 or \
                                 fc_list[i + 1].register != next_reg:
                             try:
                                 if last_point == i:
                                     self.__log_debug(f'Polling SINGLE FC {fc_list[i].function_code}')
-                                    self.__poll_point(current_connection.client, network, device, fc_list[i:i+1])
+                                    self.__poll_point(current_connection.client, network, device, fc_list[i:i + 1])
                                     last_point += 1
                                 else:
                                     self.__log_debug(f'Polling AGGREGATE FC {fc_list[i].function_code}')
                                     self.__poll_point(current_connection.client, network, device,
-                                                      fc_list[last_point:i+1])
+                                                      fc_list[last_point:i + 1])
                                     last_point = i + 1
                                 response_size = 0
                             except ConnectionException:
