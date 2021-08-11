@@ -8,13 +8,13 @@ authors = ["NubeIO <tech-support@nube-io.com>"]
 python = "^3.6"
 gunicorn = "^20.0.4"
 click = "^7.1.2"
-gevent = [
-    { version = "20.12.1", markers = "platform_machine == 'x86_64'" },
-    { git = "https://github.com/gevent/gevent.git", tag = "20.12.1", markers = "platform_machine != 'x86_64'" }
-]
-rubix-http = {git = "https://github.com/NubeIO/rubix-http", rev = "v1.1.1"}
+rubix-http = { git = "https://github.com/NubeIO/rubix-http", rev = "v1.1.1" }
 Flask-Migrate = "2.6.0"
-rubix-mqtt = {git = "https://github.com/NubeIO/rubix-mqtt", rev = "v1.2.0"}
+rubix-mqtt = { git = "https://github.com/NubeIO/rubix-mqtt", rev = "v1.2.0" }
+pymodbus = "^2.5.2"
+shortuuid = "^1.0.1"
+rubix-registry = {git = "https://github.com/NubeIO/rubix-registry", rev = "v1.1.1"}
+gevent = "^21.8.0"
 
 [tool.poetry.dev-dependencies]
 pyinstaller = "^4.1"
