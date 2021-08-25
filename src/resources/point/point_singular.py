@@ -39,6 +39,10 @@ class PointSingularResource(PointBaseResource):
     @classmethod
     def update_point(cls, data: dict, point: PointModel) -> PointModel:
         priority_array_write: dict = data.pop('priority_array_write') if data.get('priority_array_write') else {}
+        highest_priority_value: float = PriorityArrayModel.get_highest_priority_value_from_priority_array(
+            point.priority_array_write)
+        if not priority_array_write and not highest_priority_value:
+            priority_array_write = {'_16': data.get('fallback_value', None) or point.fallback_value}
         if priority_array_write:
             priority_array = PriorityArrayModel.find_by_point_uuid(point.uuid)
             if priority_array:

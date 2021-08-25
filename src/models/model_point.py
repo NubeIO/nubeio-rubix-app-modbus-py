@@ -37,7 +37,7 @@ class PointModel(ModelBase):
     scale_max = db.Column(db.Float())
     tags = db.Column(db.String(320), nullable=True)
     point_store = db.relationship('PointStoreModel', backref='point', lazy=True, uselist=False, cascade="all,delete")
-    fallback_value = db.Column(db.Float(), default=16)
+    fallback_value = db.Column(db.Float(), nullable=True)
     register = db.Column(db.Integer(), nullable=False)
     register_length = db.Column(db.Integer(), nullable=False)
     function_code = db.Column(db.Enum(ModbusFunctionCode), nullable=False)
