@@ -1,4 +1,7 @@
 # CHANGELOG
+## [v1.0.0](https://github.com/NubeIO/rubix-service/tree/v1.0.0) (2021-09-02)
+- Copy data for only v2.0.0 >= versions >= v1.7.0
+
 ## [v0.0.3](https://github.com/NubeIO/rubix-service/tree/v0.0.3) (2021-08-27)
 - Fallback should be able to set to be null
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rubix-app-modbus-py"
-version = "0.0.3"
+version = "1.0.0"
 description = "Rubix App Modbus"
 authors = ["NubeIO <tech-support@nube-io.com>"]
 

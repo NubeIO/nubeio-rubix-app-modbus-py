@@ -34,6 +34,7 @@ def get_extracted_dir(parent_dir) -> str:
 
 def copy_point_server_database(data_dir: str):
     installed_version: str = get_extracted_dir('/data/rubix-service/apps/install/rubix-point-server')
-    if installed_version and version.parse(installed_version.split("/")[-1]) <= version.parse("v2.2.0") \
+    version_ = version.parse(installed_version.split("/")[-1])
+    if installed_version and version.parse("v2.0.0") >= version_ >= version.parse("1.7.0") \
             and is_dir_exist('/data/point-server/data/data.db'):
         shutil.copyfile('/data/point-server/data/data.db', f'{data_dir}/data.db')
