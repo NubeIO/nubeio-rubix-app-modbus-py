@@ -54,6 +54,9 @@ network_all_attributes = {
     },
     'polling_interval_runtime': {
         'type': int,
+    },
+    'point_interval_ms_between_points': {
+        'type': int,
     }
 }
 
