@@ -1,4 +1,7 @@
 # CHANGELOG
+## [v1.0.1](https://github.com/NubeIO/rubix-service/tree/v1.0.1) (2021-09-24)
+- Add `point_interval_ms_between_points` field on network CURD
+
 ## [v1.0.0](https://github.com/NubeIO/rubix-service/tree/v1.0.0) (2021-09-02)
 - Copy data for only v2.0.0 >= versions >= v1.7.0
 
