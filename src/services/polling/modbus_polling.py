@@ -101,7 +101,6 @@ class ModbusPolling(metaclass=Singleton):
                         return
                     except ModbusIOException:
                         pass
-                    time.sleep(float(network.point_interval_ms_between_points) / 1000)
             else:
                 self.__log_debug(f'Device {device.uuid} aggregate R/W SUPPORTED')
                 """
@@ -255,6 +254,7 @@ class ModbusPolling(metaclass=Singleton):
                 time.sleep(float(network.point_interval_ms_between_points) / 1000)
         else:
             point_store = poll_point(client, network, device, point_list[0], update_point_store)
+            time.sleep(float(network.point_interval_ms_between_points) / 1000)
         return point_store
 
     @abstractmethod
