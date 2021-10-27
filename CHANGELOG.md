@@ -1,4 +1,7 @@
 # CHANGELOG
+## [v1.0.2](https://github.com/NubeIO/rubix-service/tree/v1.0.2) (2021-10-27)
+- Don't sleep when we don't query the Modbus device
+
 ## [v1.0.1](https://github.com/NubeIO/rubix-service/tree/v1.0.1) (2021-09-24)
 - Add `point_interval_ms_between_points` field on network CURD
 
