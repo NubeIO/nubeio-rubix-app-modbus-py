@@ -140,8 +140,8 @@ class ModbusPolling(metaclass=Singleton):
 
                         """
                         if - end of list
-                            - response size limit reached
-                            - next point is not continuous from current point
+                           - response size limit reached
+                           - next point is not continuous from current point
                         """
                         if i == len(fc_list) - 1 or response_size + fc_list[i + 1].register_length >= 253 or \
                                 fc_list[i + 1].register != next_reg:
@@ -160,7 +160,6 @@ class ModbusPolling(metaclass=Singleton):
                                 return
                             except ModbusIOException:
                                 pass
-                            time.sleep(float(network.point_interval_ms_between_points) / 1000)
                         else:
                             continue
 
@@ -253,6 +252,7 @@ class ModbusPolling(metaclass=Singleton):
                         raise error
                 except ObjectDeletedError:
                     return None
+                time.sleep(float(network.point_interval_ms_between_points) / 1000)
         else:
             point_store = poll_point(client, network, device, point_list[0], update_point_store)
         return point_store
