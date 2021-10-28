@@ -1,4 +1,7 @@
 # CHANGELOG
+## [v1.0.3](https://github.com/NubeIO/rubix-service/tree/v1.0.3) (2021-10-28)
+- Improvement on sleep
+
 ## [v1.0.2](https://github.com/NubeIO/rubix-service/tree/v1.0.2) (2021-10-27)
 - Don't sleep when we don't query the Modbus device
 
