@@ -126,6 +126,20 @@ class ModbusPolling(metaclass=Singleton):
                     else:
                         raise Exception(f'FC {point.function_code} unsupported for aggregate')
 
+                def is_point_to_be_written(point: PointModel) -> bool:
+                    write_value: float = PriorityArrayModel.get_highest_priority_value_from_priority_array(
+                        point.priority_array_write)
+                    return not((point.is_writable(point.function_code) and write_value is None) or (
+                        point.is_writable(point.function_code) and point.write_value_once and
+                        point.point_store is not None and not point.point_store.fault and
+                        point.point_store.value_original == write_value))
+
+                def clear_write_points(point_list: List[PointModel]):
+                    point_list[:] = [p for p in point_list if is_point_to_be_written(p)]
+
+                clear_write_points(fc_lists[4])
+                clear_write_points(fc_lists[5])
+
                 for fc_list in fc_lists:
                     fc_list.sort(key=lambda p: p.register)
 
@@ -211,18 +225,10 @@ class ModbusPolling(metaclass=Singleton):
 
     @staticmethod
     def __poll_point(client: BaseModbusClient, network: NetworkModel, device: DeviceModel,
-                     point_list: List[PointModel], update_all: bool = True,
+                     point_list: List[PointModel], update_device_and_network: bool = True,
                      update_point_store: bool = True) -> Union[PointStoreModel, None]:
         point_store: Union[PointStoreModel, None] = None
-        if update_all:
-            for point in point_list:
-                write_value: float = PriorityArrayModel.get_highest_priority_value_from_priority_array(
-                    point.priority_array_write)
-                if (point.is_writable(point.function_code) and write_value is None) or (
-                        point.is_writable(point.function_code) and point.write_value_once and
-                        point.point_store is not None and not point.point_store.fault and
-                        point.point_store.value_original == write_value):
-                    point_list.remove(point)
+        if update_device_and_network:
             if len(point_list) > 0:
                 try:
                     error = None
