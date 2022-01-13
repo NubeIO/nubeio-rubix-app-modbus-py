@@ -126,19 +126,10 @@ class ModbusPolling(metaclass=Singleton):
                     else:
                         raise Exception(f'FC {point.function_code} unsupported for aggregate')
 
-                def is_point_to_be_written(point: PointModel) -> bool:
-                    write_value: float = PriorityArrayModel.get_highest_priority_value_from_priority_array(
-                        point.priority_array_write)
-                    return not((point.is_writable(point.function_code) and write_value is None) or (
-                        point.is_writable(point.function_code) and point.write_value_once and
-                        point.point_store is not None and not point.point_store.fault and
-                        point.point_store.value_original == write_value))
-
-                def clear_write_points(point_list: List[PointModel]):
-                    point_list[:] = [p for p in point_list if is_point_to_be_written(p)]
-
-                clear_write_points(fc_lists[4])
-                clear_write_points(fc_lists[5])
+                # not the most efficient in respect to polling loop time (i.e. lora netowrks)
+                #  but most efficient in respect to wear on end device individual register writes
+                fc_lists[4][:] = [p for p in fc_lists[4] if self.is_point_to_be_written(p)]
+                fc_lists[5][:] = [p for p in fc_lists[5] if self.is_point_to_be_written(p)]
 
                 for fc_list in fc_lists:
                     fc_list.sort(key=lambda p: p.register)
@@ -263,6 +254,15 @@ class ModbusPolling(metaclass=Singleton):
             point_store = poll_point(client, network, device, point_list[0], update_point_store)
             time.sleep(float(network.point_interval_ms_between_points) / 1000)
         return point_store
+
+    @staticmethod
+    def is_point_to_be_written(point: PointModel) -> bool:
+        write_value: float = PriorityArrayModel.get_highest_priority_value_from_priority_array(
+            point.priority_array_write)
+        return not((point.is_writable(point.function_code) and write_value is None) or (
+            point.is_writable(point.function_code) and point.write_value_once and
+            point.point_store is not None and not point.point_store.fault and
+            point.point_store.value_original == write_value))
 
     @abstractmethod
     def get_registry(self) -> ModbusRegistry:
