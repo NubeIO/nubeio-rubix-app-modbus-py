@@ -1,4 +1,7 @@
 # CHANGELOG
+## [v1.0.5](https://github.com/NubeIO/rubix-service/tree/v1.0.5) (2022-01-13)
+- Fix: write_value_once
+
 ## [v1.0.4](https://github.com/NubeIO/rubix-service/tree/v1.0.4) (2021-11-11)
 - Improvement on skipping write modbus value
 
