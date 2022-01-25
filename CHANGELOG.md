@@ -1,4 +1,7 @@
 # CHANGELOG
+## [v1.0.6](https://github.com/NubeIO/rubix-service/tree/v1.0.6) (2022-01-25)
+- Fix: single poll null writes
+
 ## [v1.0.5](https://github.com/NubeIO/rubix-service/tree/v1.0.5) (2022-01-13)
 - Fix: write_value_once
 
