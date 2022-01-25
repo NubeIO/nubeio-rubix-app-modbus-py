@@ -96,6 +96,8 @@ class ModbusPolling(metaclass=Singleton):
                 self.__log_debug(f'Device {device.uuid} aggregate R/W UNSUPPORTED')
                 for point in points:
                     try:
+                        if point.is_writable(point.function_code) and not self.is_point_to_be_written(point):
+                            continue
                         self.__poll_point(current_connection.client, network, device, [point])
                     except ConnectionException:
                         return
