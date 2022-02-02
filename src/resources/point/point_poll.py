@@ -15,8 +15,8 @@ from src.models.model_priority_array import PriorityArrayModel
 class PointPollResource(RubixResource):
     @classmethod
     @marshal_with(point_all_fields)
-    def get(cls, uuid: str):
-        point: PointModel = PointModel.find_by_uuid(uuid)
+    def get(cls, **kwargs):
+        point = cls.get_point(**kwargs)
         if not point:
             raise NotFoundException('Modbus Point not found')
         else:
@@ -25,22 +25,43 @@ class PointPollResource(RubixResource):
             else:
                 return TcpPolling().poll_point(point)
 
+    @classmethod
+    def get_point(cls, **kwargs) -> PointModel:
+        raise NotImplementedError
+
+
+class PointPollResourceByUUID(PointPollResource):
+    @classmethod
+    def get_point(cls, **kwargs) -> PointModel:
+        return PointModel.find_by_uuid(kwargs.get('uuid'))
+
+
+class PointPollResourceByName(PointPollResource):
+    @classmethod
+    def get_point(cls, **kwargs) -> PointModel:
+        return PointModel.find_by_name(kwargs.get('network_name'), kwargs.get('device_name'),
+                                       kwargs.get('point_name'))
+
 
 class PointPollNonExistingResource(RubixResource):
     parser = reqparse.RequestParser()
     for attr in poll_non_existing_attributes:
         parser.add_argument(attr,
                             type=poll_non_existing_attributes[attr]['type'],
-                            required=poll_non_existing_attributes[attr].get('required', False),
+                            required=poll_non_existing_attributes[attr].get(
+                                'required', False),
                             store_missing=False)
 
     @classmethod
     @marshal_with(point_store_fields)
     def post(cls):
         data = cls.parser.parse_args()
-        network_data = {k.replace('network_', ''): v for k, v in data.items() if 'network_' in k}
-        device_data = {k.replace('device_', ''): v for k, v in data.items() if 'device_' in k}
-        point_data = {k.replace('point_', ''): v for k, v in data.items() if 'point_' in k}
+        network_data = {k.replace('network_', ''): v for k,
+                        v in data.items() if 'network_' in k}
+        device_data = {k.replace('device_', ''): v for k,
+                       v in data.items() if 'device_' in k}
+        point_data = {k.replace('point_', ''): v for k,
+                      v in data.items() if 'point_' in k}
 
         network = NetworkModel.create_temporary(**network_data)
         device = DeviceModel.create_temporary(**device_data)
@@ -52,8 +73,9 @@ class PointPollNonExistingResource(RubixResource):
         network.check_self()
         device.check_self()
         point.check_self()
+        device.type = network.type
 
-        if device.type == ModbusType.RTU:
+        if network.type == ModbusType.RTU:
             return RtuPolling().poll_point_not_existing(point, device, network)
         else:
             return TcpPolling().poll_point_not_existing(point, device, network)

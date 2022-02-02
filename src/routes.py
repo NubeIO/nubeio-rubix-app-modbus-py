@@ -9,7 +9,7 @@ from src.resources.mapping.mapping import MPGBPMappingResourceList, MPGBPMapping
 from src.resources.network.netwrok_plural import NetworkPluralResource
 from src.resources.network.netwrok_singular import NetworkSingularResourceByUUID, NetworkSingularResourceByName
 from src.resources.point.point_plural import PointPluralResource
-from src.resources.point.point_poll import PointPollResource, PointPollNonExistingResource
+from src.resources.point.point_poll import PointPollResource, PointPollNonExistingResource, PointPollResourceByName, PointPollResourceByUUID
 from src.resources.point.point_singular import PointSingularResourceByUUID, PointSingularResourceByName
 from src.resources.point.point_stores import PointPluralPointStoreResource, PointStoreResource, \
     DevicePointPluralPointStoreResource
@@ -35,7 +35,9 @@ api_modbus.add_resource(PointPluralResource, '/points')
 api_modbus.add_resource(PointSingularResourceByUUID, '/points/uuid/<string:uuid>')
 api_modbus.add_resource(PointSingularResourceByName,
                         '/points/name/<string:network_name>/<string:device_name>/<string:point_name>')
-api_modbus.add_resource(PointPollResource, '/poll/point/<string:uuid>')
+api_modbus.add_resource(PointPollResourceByUUID, '/poll/point/uuid/<string:uuid>')
+api_modbus.add_resource(PointPollResourceByName,
+                        '/poll/point/name/<string:network_name>/<string:device_name>/<string:point_name>')
 api_modbus.add_resource(PointPollNonExistingResource, '/poll/point')
 api_modbus.add_resource(PointPluralPointStoreResource, '/point_stores')
 api_modbus.add_resource(PointStoreResource, '/point_stores/<string:uuid>')
