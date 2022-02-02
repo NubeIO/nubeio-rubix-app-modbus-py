@@ -1,4 +1,8 @@
 # CHANGELOG
+## [v1.1.0](https://github.com/NubeIO/rubix-service/tree/v1.1.0) (2022-02-02)
+- Fix poll-non-existing network type
+- Add poll-existing-by-name (Note: this changes poll-existing-by-uuid URL)
+
 ## [v1.0.6](https://github.com/NubeIO/rubix-service/tree/v1.0.6) (2022-01-25)
 - Fix: single poll null writes
 
