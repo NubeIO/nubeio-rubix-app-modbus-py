@@ -71,7 +71,7 @@ class NetworkModel(ModelBase):
                 raise ValueError("tcp_ip should be be there on type TCP")
             if not self.tcp_port:
                 raise ValueError("tcp_port should be be there on type TCP")
-        return value
+        return ModbusType[value]
 
     @classmethod
     def find_by_name(cls, network_name: str):
