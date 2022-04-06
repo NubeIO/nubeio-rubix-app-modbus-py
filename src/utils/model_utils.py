@@ -42,3 +42,12 @@ def validate_json(value: str):
         clean_obj = re.sub('[^A-Za-z0-9_]+', '', clean_obj)
         return_value[clean_obj] = objects[obj]
     return json.dumps(return_value)
+
+
+def get_highest_priority_value_from_priority_array(priority_array):
+    if priority_array:
+        for i in range(1, 17):
+            value = getattr(priority_array, f'_{i}', None)
+            if value is not None:
+                return value
+    return None

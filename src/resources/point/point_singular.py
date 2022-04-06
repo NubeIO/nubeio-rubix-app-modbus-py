@@ -5,6 +5,7 @@ from src.models.model_point import PointModel
 from src.resources.point.point_base import PointBaseResource
 from src.resources.rest_schema.schema_point import point_all_fields, point_all_attributes
 from src.models.model_priority_array import PriorityArrayModel
+from src.utils.model_utils import get_highest_priority_value_from_priority_array
 
 
 class PointSingularResource(PointBaseResource):
@@ -39,8 +40,7 @@ class PointSingularResource(PointBaseResource):
     @classmethod
     def update_point(cls, data: dict, point: PointModel) -> PointModel:
         priority_array_write: dict = data.pop('priority_array_write') if data.get('priority_array_write') else {}
-        highest_priority_value: float = PriorityArrayModel.get_highest_priority_value_from_priority_array(
-            point.priority_array_write)
+        highest_priority_value: float = get_highest_priority_value_from_priority_array(point.priority_array_write)
         if not priority_array_write and not highest_priority_value:
             priority_array_write = {'_16': data.get('fallback_value', None) or point.fallback_value}
         if priority_array_write:

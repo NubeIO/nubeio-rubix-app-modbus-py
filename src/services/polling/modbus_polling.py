@@ -19,7 +19,6 @@ from src.services.modbus_rtu_registry import ModbusRtuRegistry
 from src.services.modbus_tcp_registry import ModbusTcpRegistry, ModbusTcpRegistryKey
 from src.services.polling.poll import poll_point, poll_point_aggregate
 from src.models.model_point_store import PointStoreModel
-from src.models.model_priority_array import PriorityArrayModel
 from src.utils import Singleton
 
 logger = logging.getLogger(__name__)
@@ -259,8 +258,7 @@ class ModbusPolling(metaclass=Singleton):
 
     @staticmethod
     def is_point_to_be_written(point: PointModel) -> bool:
-        write_value: float = PriorityArrayModel.get_highest_priority_value_from_priority_array(
-            point.priority_array_write)
+        write_value: float = point.get_highest_priority_write_value()
         return not((point.is_writable(point.function_code) and write_value is None) or (
             point.is_writable(point.function_code) and point.write_value_once and
             point.point_store is not None and not point.point_store.fault and

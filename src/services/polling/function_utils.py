@@ -5,7 +5,6 @@ from pymodbus.payload import BinaryPayloadDecoder, BinaryPayloadBuilder
 
 from src.enums.point import ModbusDataEndian, ModbusDataType
 from src.models.model_point import PointModel
-from src.models.model_priority_array import PriorityArrayModel
 
 
 def _set_data_length(data_type: ModbusDataType, reg_length: int) -> int:
@@ -105,7 +104,6 @@ def pack_point_write_registers(point_list: List[PointModel]):
     final_payload = []
     for point in point_list:
         byteorder, word_order = _mod_point_data_endian(point.data_endian)
-        write_value: float = PriorityArrayModel.get_highest_priority_value_from_priority_array(
-            point.priority_array_write) or 0
+        write_value: float = point.get_highest_priority_write_value() or 0
         final_payload.extend(_builder_data_type(write_value, point.data_type, byteorder, word_order))
     return final_payload

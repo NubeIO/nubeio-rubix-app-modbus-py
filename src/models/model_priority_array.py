@@ -1,6 +1,7 @@
 from sqlalchemy import inspect
 
 from src import db
+from src.utils.model_utils import get_highest_priority_value_from_priority_array
 
 
 class PriorityArrayModel(db.Model):
@@ -42,7 +43,7 @@ class PriorityArrayModel(db.Model):
         db.session.commit()
 
     def check_self(self) -> (bool, any):
-        if self.get_highest_priority_value_from_priority_array(self) is None:
+        if get_highest_priority_value_from_priority_array(self) is None:
             from src.models.model_point import PointModel
             point: PointModel = self.point
             self._16 = point.fallback_value
@@ -50,7 +51,7 @@ class PriorityArrayModel(db.Model):
     @classmethod
     def create_priority_array_model(cls, point_uuid, priority_array_write, fallback_value):
         priority_array = PriorityArrayModel(point_uuid=point_uuid, **priority_array_write)
-        if cls.get_highest_priority_value_from_priority_array(priority_array) is None:
+        if get_highest_priority_value_from_priority_array(priority_array) is None:
             priority_array._16 = fallback_value
         return priority_array
 
@@ -61,13 +62,4 @@ class PriorityArrayModel(db.Model):
     @classmethod
     def get_highest_priority_value(cls, point_uuid):
         priority_array: PriorityArrayModel = cls.find_by_point_uuid(point_uuid)
-        return cls.get_highest_priority_value_from_priority_array(priority_array)
-
-    @classmethod
-    def get_highest_priority_value_from_priority_array(cls, priority_array):
-        if priority_array:
-            for i in range(1, 17):
-                value = getattr(priority_array, f'_{i}', None)
-                if value is not None:
-                    return value
-        return None
+        return get_highest_priority_value_from_priority_array(priority_array)
