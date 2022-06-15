@@ -8,3 +8,5 @@
     ```bash
     ./setup.sh
     ```
+
+- Port: `1516`
