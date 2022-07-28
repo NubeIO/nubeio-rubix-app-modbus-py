@@ -1,4 +1,7 @@
 # CHANGELOG
+## [v1.1.1](https://github.com/NubeIO/rubix-service/tree/v1.1.1) (2022-07-28)
+- Fix: Too many open files issues
+
 ## [v1.1.0](https://github.com/NubeIO/rubix-service/tree/v1.1.0) (2022-02-02)
 - Fix poll-non-existing network type
 - Add poll-existing-by-name (Note: this changes poll-existing-by-uuid URL)
