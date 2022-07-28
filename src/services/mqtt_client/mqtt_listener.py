@@ -21,11 +21,13 @@ from src.setting import MqttSetting
 logger = logging.getLogger(__name__)
 
 
+device_info: Union[DeviceInfoModel, None] = get_device_info()
+
+
 class MqttListener(MqttClientBase):
     SEPARATOR: str = '/'
 
     def __init__(self):
-        self.__device_info: Union[DeviceInfoModel, None] = None
         self.__config: Union[MqttSetting, None] = None
         self.__app_context: Union[AppContext, None] = None
         MqttClientBase.__init__(self)
@@ -36,13 +38,12 @@ class MqttListener(MqttClientBase):
 
     @property
     def device_info(self) -> Union[DeviceInfoModel, None]:
-        return self.__device_info
+        return device_info
 
     def start(self, config: MqttSetting, subscribe_topics: List[str] = None, callback: Callable = lambda: None):
         self.__app_context: Union[AppContext] = current_app.app_context
         self.__config = config
-        self.__device_info: Union[DeviceInfoModel, None] = get_device_info()
-        if not self.__device_info:
+        if not device_info:
             logger.error('Please add device-info on Rubix Service')
             return
         subscribe_topics: List[str] = []
