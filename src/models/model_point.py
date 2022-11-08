@@ -12,8 +12,8 @@ from src.models.model_point_store import PointStoreModel
 from src.models.model_priority_array import PriorityArrayModel
 
 from src.models.model_base import ModelBase
-from src.utils.math_functions import eval_arithmetic_expression
-from src.utils.model_utils import validate_json
+from src.utils.math_functions import eval_arithmetic_expression, eval_arithmetic_equation
+from src.utils.model_utils import validate_json, get_highest_priority_value_from_priority_array
 
 
 class PointModel(ModelBase):
@@ -291,6 +291,20 @@ class PointModel(ModelBase):
             return scaled
 
     @classmethod
+    def revert_scale(cls, scaled: float, input_min: float, input_max: float, output_min: float, output_max: float) \
+            -> float or None:
+        if scaled is None or input_min is None or input_max is None or output_min is None or output_max is None:
+            return scaled
+        if input_min == input_max or output_min == output_max:
+            return scaled
+        if scaled > max(output_max, output_min):
+            scaled = max(output_max, output_min)
+        elif scaled < min(output_max, output_min):
+            scaled = min(output_max, output_min)
+        value = ((scaled - output_min) * (input_max - input_min)) / (output_max - output_min) + input_min
+        return value
+
+    @classmethod
     def filter_by_device_uuid(cls, device_uuid: str):
         return cls.query.filter_by(device_uuid=device_uuid)
 
@@ -328,3 +342,15 @@ class PointModel(ModelBase):
     def is_writable_by_str(value: str) -> bool:
         return value in [ModbusFunctionCode.WRITE_COIL.name, ModbusFunctionCode.WRITE_COILS.name,
                          ModbusFunctionCode.WRITE_REGISTER.name, ModbusFunctionCode.WRITE_REGISTERS.name]
+
+    def get_highest_priority_write_value(self):
+        highest_priority_value = get_highest_priority_value_from_priority_array(self.priority_array_write)
+        if not highest_priority_value:
+            return None
+        if self.function_code in (ModbusFunctionCode.WRITE_COIL, ModbusFunctionCode.WRITE_COILS,
+                                  ModbusFunctionCode.WRITE_REGISTER, ModbusFunctionCode.WRITE_REGISTERS):
+            equation = f'{self.value_operation}={highest_priority_value}'
+            highest_priority_value = eval_arithmetic_equation(equation)
+            highest_priority_value = self.revert_scale(highest_priority_value, self.input_min, self.input_max,
+                                                       self.scale_min, self.scale_max)
+        return round(highest_priority_value, self.value_round)

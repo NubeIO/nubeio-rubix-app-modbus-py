@@ -14,7 +14,6 @@ from src.services.polling.function_utils import _mod_point_data_endian, convert_
 from src.services.polling.functions import read_digital, write_digital, \
     read_analogue, write_analogue, write_analogue_aggregate
 from src.models.model_point_store import PointStoreModel
-from src.models.model_priority_array import PriorityArrayModel
 
 logger = logging.getLogger(__name__)
 
@@ -28,8 +27,7 @@ def poll_point_aggregate(client: BaseModbusClient, network: NetworkModel,
     write_values = []
     for point in point_slice:
         point_register_length += point.register_length
-        write_value: float = PriorityArrayModel.get_highest_priority_value_from_priority_array(
-            point.priority_array_write) or 0
+        write_value: float = point.get_highest_priority_write_value() or 0
         write_values.append(write_value)
     point_fc: ModbusFunctionCode = point_slice[0].function_code
     if point_fc is ModbusFunctionCode.WRITE_COIL:
@@ -113,9 +111,7 @@ def poll_point(client: BaseModbusClient, network: NetworkModel,
     point_fc: ModbusFunctionCode = point.function_code
     point_data_type: ModbusDataType = point.data_type
     point_data_endian: ModbusDataEndian = point.data_endian
-    write_value: float = PriorityArrayModel.get_highest_priority_value_from_priority_array(
-        point.priority_array_write) or 0
-
+    write_value: float = point.get_highest_priority_write_value() or 0
     fault: bool = False
     fault_message: str = ""
     point_store_new = None

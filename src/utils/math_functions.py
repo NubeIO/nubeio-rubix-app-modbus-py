@@ -2,8 +2,8 @@ import ast
 import operator as op
 
 # supported operators
-operators = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul, ast.Div: op.truediv, ast.FloorDiv: op.floordiv,
-             ast.Pow: op.pow, ast.Mod: op.mod, ast.USub: op.neg, ast.UAdd: op.pos}
+operators = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul, ast.Div: op.truediv, ast.USub: op.neg,
+             ast.UAdd: op.pos}
 
 
 def eval_arithmetic_expression(expression: str):
@@ -16,18 +16,36 @@ def eval_arithmetic_expression(expression: str):
     30
     >>> eval_arithmetic_expression('15/2')
     7.5
-    >>> eval_arithmetic_expression('15//2')
-    7
-    >>> eval_arithmetic_expression('15**2')
-    225
-    >>> eval_arithmetic_expression('15%2')
-    1
     >>> eval_arithmetic_expression('-15+2')
-    13
+    -13
     >>> eval_arithmetic_expression('+15-2')
     13
     """
     return __eval(ast.parse(expression, mode='eval').body)
+
+
+def eval_arithmetic_equation(equation: str):
+    """
+    >>> eval_arithmetic_equation('x+2=17')
+    15
+    >>> eval_arithmetic_equation('x-2=13')
+    15
+    >>> eval_arithmetic_equation('x*2=30')
+    15
+    >>> eval_arithmetic_equation('x/2=7.5')
+    15
+    >>> eval_arithmetic_equation('-x+2=13')
+    15
+    >>> eval_arithmetic_equation('+x-2=13')
+    15
+    """
+    equation = f'{equation.replace(" ", "").replace("=", "-(")})'
+    equation = equation.replace('x', '1j')
+    result = __eval(ast.parse(equation, mode='eval').body)
+    value = (-result.real / result.imag)
+    if value in (-0, +0):
+        return 0
+    return value
 
 
 def __eval(node):
